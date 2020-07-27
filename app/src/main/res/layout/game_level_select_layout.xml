@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:background="@drawable/all_side_rounded_bg"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <ImageView
+        android:id="@+id/app_logo_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/app_icon" />
+
+    <TextView
+        android:id="@+id/app_name_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Game Level"
+        android:textColor="@color/green"
+        android:textSize="45dp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/game_level_radiogroup"
+        android:checkedButton="@id/radiobutton_simple">
+
+        <RadioButton
+            android:id="@+id/radiobutton_simple"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Simple"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Here, a color will be displayed then you be requested to find the matching color from the options below" />
+
+        <RadioButton
+            android:id="@+id/radiobutton_medium"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Medium"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Here, a color will be displayed then you be requested to find the matching color from the options below with minimal as 'SIMPLE'" />
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/radiobutton_hard"
+            android:text="Hard"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Here, a color will be displayed then you have to select the name of the color from the options shown below." />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/game_level_select_dismiss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:background="@drawable/all_side_rounded_bg"
+            android:text="Select"
+            android:textColor="@color/grey" />
+
+    </LinearLayout>
+</LinearLayout>

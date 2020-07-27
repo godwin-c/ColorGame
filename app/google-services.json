@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "93463835125",
+    "firebase_url": "https://color-game-1593986538080.firebaseio.com",
+    "project_id": "color-game-1593986538080",
+    "storage_bucket": "color-game-1593986538080.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93463835125:android:e8f3c2bb58518181bfb0bc",
+        "android_client_info": {
+          "package_name": "com.ixzmedia.colorgame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93463835125-m0dgbjcms8olmesjq1ujh60ams29aelp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ixzmedia.colorgame",
+            "certificate_hash": "66956d68c7f53f057cf0d07292e8510afb5e5b64"
+          }
+        },
+        {
+          "client_id": "93463835125-4na8tscdf8rjf2tr34b1iivdovaof3af.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdtdr0jfWO7qT3whRtGhdKQx2c_8ZSlGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93463835125-4na8tscdf8rjf2tr34b1iivdovaof3af.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

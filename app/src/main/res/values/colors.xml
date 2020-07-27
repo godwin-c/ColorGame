@@ -7,4 +7,9 @@
     <color name="blue">#0000FF</color>
     <color name="red">#FF0000</color>
     <color name="purple">#9c39bf</color>
+    <color name="green">#006400</color>
+    <color name="grey">#999999</color>
+    <color name="black">#000000</color>
+    <color name="grey_20">#cccccc</color>
+    <color name="grey_80">#37474F</color>
 </resources>
