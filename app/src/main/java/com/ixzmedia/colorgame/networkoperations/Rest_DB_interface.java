@@ -5,6 +5,9 @@ import com.ixzmedia.colorgame.networkoperations.models.HighScoreModelResponse;
 import com.ixzmedia.colorgame.networkoperations.models.UserModel;
 import com.ixzmedia.colorgame.networkoperations.models.UserModelResponse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -19,5 +22,5 @@ public interface Rest_DB_interface {
     Call<HighScoreModelResponse> uploadHighscore(@Body HighScoreModel highScoreModel);
 
     @GET("color-game-highscores")
-    Call<HighScoreModelResponse> getallHighScores();
+    Call<ArrayList<HighScoreModelResponse>> getAllHighScores();
 }

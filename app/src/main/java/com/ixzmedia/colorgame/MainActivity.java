@@ -30,7 +30,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,7 +40,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ixzmedia.colorgame.classes.Highscore;
-import com.ixzmedia.colorgame.classes.ImageCreationClass;
 import com.ixzmedia.colorgame.classes.NetworkAvaillabilityClass;
 import com.ixzmedia.colorgame.classes.ViewAnimation;
 import com.ixzmedia.colorgame.networkoperations.CustomCallBack;
@@ -59,12 +57,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
     GoogleSignInClient mGoogleSignInClient;
     public static int RC_SIGN_IN = 10012;
+    private static final String FILENAME = "all_leaders_scores";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,8 +187,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //DesignerToast.Info(MainActivity.this, "coming soon!", Gravity.CENTER, Toast.LENGTH_SHORT);
-                Intent intent = new Intent(MainActivity.this,LeaderBoardActivity.class);
-                startActivity(intent);
+                if (fileExists()) {
+                    Intent intent = new Intent(MainActivity.this, LeaderBoardActivity.class);
+                    startActivity(intent);
+                } else {
+                    downloadHighScore();
+                }
+
             }
         });
 
@@ -220,24 +226,137 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void downloadHighScore() {
+
+        NetworkAvaillabilityClass networkAvaillabilityClass = new NetworkAvaillabilityClass(MainActivity.this);
+        if (networkAvaillabilityClass.hasNetwork()) {
+            Rest_DB_interface rest_db_interface = Rest_DB_Client.getClient().create(Rest_DB_interface.class);
+            Call<ArrayList<HighScoreModelResponse>> call = rest_db_interface.getAllHighScores();
+
+            call.enqueue(new CustomCallBack<>(MainActivity.this, new Callback<ArrayList<HighScoreModelResponse>>() {
+                @Override
+                public void onResponse(Call<ArrayList<HighScoreModelResponse>> call, Response<ArrayList<HighScoreModelResponse>> response) {
+
+                    if (response.code() == 200) {
+                        ArrayList<HighScoreModelResponse> highScoreModelResponses = response.body();
+
+                        assert highScoreModelResponses != null;
+                        if (highScoreModelResponses.size() > 0) {
+//                            medium
+                            ArrayList<HighScoreModelResponse> easyHighScores = new ArrayList<>();
+                            ArrayList<HighScoreModelResponse> mediumHighScore = new ArrayList<>();
+                            ArrayList<HighScoreModelResponse> hardHighScore = new ArrayList<>();
+
+
+                            for (HighScoreModelResponse highScoreModelResponse : highScoreModelResponses) {
+                                String level = highScoreModelResponse.getGame_level();
+                                switch (level) {
+                                    case "easy":
+
+                                        easyHighScores.add(highScoreModelResponse);
+                                        break;
+                                    case "medium":
+                                        mediumHighScore.add(highScoreModelResponse);
+                                        break;
+                                    case "hard":
+                                        hardHighScore.add(highScoreModelResponse);
+                                        break;
+                                }
+                            }
+
+                            ArrayList<HighScoreModelResponse> topThreeHighScore = new ArrayList<>();
+
+                            if (easyHighScores.size() > 0) {
+                                topThreeHighScore.add(checkHighestScore(easyHighScores));
+                                storeResponse(easyHighScores, "easy_level");
+                            }
+
+                            if (mediumHighScore.size() > 0) {
+                                topThreeHighScore.add(checkHighestScore(mediumHighScore));
+                                storeResponse(mediumHighScore, "medium_level");
+                            }
+
+                            if (hardHighScore.size() > 0) {
+                                topThreeHighScore.add(checkHighestScore(hardHighScore));
+                                storeResponse(hardHighScore, "hard_level");
+                            }
+
+                            storeResponse(topThreeHighScore, "top_three_high_scores");
+
+                            Intent intent = new Intent(MainActivity.this, LeaderBoardActivity.class);
+                            startActivity(intent);
+
+                        } else {
+                            DesignerToast.Info(MainActivity.this, "no high scores uploaded yet. Be the first to upload yours", Gravity.CENTER, Toast.LENGTH_SHORT);
+                        }
+
+                    } else {
+                        DesignerToast.Error(MainActivity.this, "error while fetching high scores", Gravity.CENTER, Toast.LENGTH_SHORT);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<HighScoreModelResponse>> call, Throwable t) {
+                    DesignerToast.Error(MainActivity.this, "error while fetching high scores '" + t.getMessage() + "'", Gravity.CENTER, Toast.LENGTH_SHORT);
+                }
+            }));
+        } else {
+
+            DesignerToast.Error(MainActivity.this, "looks like you are not connected to the internet", Gravity.CENTER, Toast.LENGTH_SHORT);
+        }
+    }
+
+    private HighScoreModelResponse checkHighestScore(ArrayList<HighScoreModelResponse> sampleHighScores) {
+
+        int highScore = 1;
+        HighScoreModelResponse winner = null;
+        for (HighScoreModelResponse highScoreModelResponse : sampleHighScores) {
+            if (highScoreModelResponse.getHighscore() >= highScore) {
+                highScore = highScoreModelResponse.getHighscore();
+                winner = highScoreModelResponse;
+            }
+        }
+
+        return winner;
+    }
+
+    private boolean fileExists() {
+        File file = getFileStreamPath(FILENAME);
+        // File file = new File(FILENAME );
+        return file.exists();
+    }
+
+    private void storeResponse(ArrayList<HighScoreModelResponse> highScoreModelResponses, String filename) {
+        try {
+            FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fos);
+            objectOutputStream.writeObject(highScoreModelResponses);
+
+            objectOutputStream.close();
+        } catch (Exception e) {
+            Log.d(TAG, "storeResponse: " + e.getLocalizedMessage());
+        }
+    }
+
     private void uploadHighScore() {
         NetworkAvaillabilityClass networkAvaillabilityClass = new NetworkAvaillabilityClass(MainActivity.this);
 
-        if (networkAvaillabilityClass.hasNetwork()){
+        if (networkAvaillabilityClass.hasNetwork()) {
             performUpload();
-        }else{
-            DesignerToast.Warning(MainActivity.this,"You may not be connected to the internet",Gravity.CENTER,Toast.LENGTH_SHORT);
+        } else {
+            DesignerToast.Warning(MainActivity.this, "You may not be connected to the internet", Gravity.CENTER, Toast.LENGTH_SHORT);
         }
     }
 
     private void performUpload() {
         Highscore highscore = retrieveHighscore();
-        if (highscore != null){
+        if (highscore != null) {
             UserModelResponse userModelResponse = retrieveUser();
-            if (userModelResponse != null){
+            if (userModelResponse != null) {
                 Rest_DB_interface rest_db_interface = Rest_DB_Client.getClient().create(Rest_DB_interface.class);
 
-                HighScoreModel highScoreModel = new HighScoreModel(userModelResponse.get_id(),highscore.getScore(),getSelectedLevel(), getDate(), userModelResponse.getName(),userModelResponse.getProfile_url());
+                HighScoreModel highScoreModel = new HighScoreModel(userModelResponse.get_id(), highscore.getScore(), getSelectedLevel(), getDate(), userModelResponse.getName(), userModelResponse.getProfile_url());
 
                 Call<HighScoreModelResponse> call = rest_db_interface.uploadHighscore(highScoreModel);
                 call.enqueue(new CustomCallBack<HighScoreModelResponse>(MainActivity.this, new Callback<HighScoreModelResponse>() {
@@ -248,9 +367,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "onResponse:  ret " + response.body());
                             Log.d(TAG, "onResponse:  ret " + getClass().getEnclosingMethod().getName());
                             Log.d(TAG, "onResponse: " + response.code());
-                            DesignerToast.Success(MainActivity.this,"High Score uploaded", Gravity.CENTER,Toast.LENGTH_SHORT);
-                        }else {
-                            DesignerToast.Error(MainActivity.this, "Ooops! Upload failed", Gravity.CENTER,Toast.LENGTH_SHORT);
+                            DesignerToast.Success(MainActivity.this, "High Score uploaded", Gravity.CENTER, Toast.LENGTH_SHORT);
+                        } else {
+                            DesignerToast.Error(MainActivity.this, "Ooops! Upload failed", Gravity.CENTER, Toast.LENGTH_SHORT);
                         }
                     }
 
@@ -261,11 +380,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onResponse:  ret " + getClass().getEnclosingMethod().getName());
                     }
                 }));
-            }else {
-                DesignerToast.Error(MainActivity.this,"you need to login before you can upload high score",Gravity.CENTER,Toast.LENGTH_SHORT);
+            } else {
+                DesignerToast.Error(MainActivity.this, "you need to login before you can upload high score", Gravity.CENTER, Toast.LENGTH_SHORT);
             }
-        }else{
-            DesignerToast.Error(MainActivity.this,"you have no high score to upload",Gravity.CENTER,Toast.LENGTH_SHORT);
+        } else {
+            DesignerToast.Error(MainActivity.this, "you have no high score to upload", Gravity.CENTER, Toast.LENGTH_SHORT);
         }
 
     }
@@ -282,8 +401,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void shareBitmap(@NonNull Bitmap bitmap)
-    {
+    private void shareBitmap(@NonNull Bitmap bitmap) {
         //---Save bitmap to external cache directory---//
         //get cache directory
         File cachePath = new File(getExternalCacheDir(), "my_images/");
@@ -292,18 +410,15 @@ public class MainActivity extends AppCompatActivity {
         //create png file
         File file = new File(cachePath, "color_game_highscore.png");
         FileOutputStream fileOutputStream;
-        try
-        {
+        try {
             fileOutputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
             fileOutputStream.flush();
             fileOutputStream.close();
 
-        } catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -354,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
         final Button dismissButton = dialogView.findViewById(R.id.btn_game_info_dismiss);
         final AlertDialog alertDialog = builder.create();
 
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         alertDialog.setCancelable(true);
         alertDialog.setCanceledOnTouchOutside(true);
@@ -380,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
         final Button selectButton = dialogView.findViewById(R.id.game_level_select_dismiss);
         final AlertDialog alertDialog = builder.create();
 
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         alertDialog.setCancelable(true);
         alertDialog.setCanceledOnTouchOutside(true);
@@ -421,15 +536,14 @@ public class MainActivity extends AppCompatActivity {
     private String getSelectedLevel() {
         SharedPreferences preferences = getSharedPreferences("color_game_level", MODE_PRIVATE);
 
-        String level = preferences.getString("level", "simple");
-        return level;
+        return preferences.getString("level", "simple");
     }
 
     private void storeSelectedLevel(String level) {
         SharedPreferences preferences = getSharedPreferences("color_game_level", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("level", level);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -463,8 +577,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             UserModelResponse userModelResponse = retrieveUser();
-            if (userModelResponse != null){
-                setUserDetails(userModelResponse.getProfile_url(),userModelResponse.getName());
+            if (userModelResponse != null) {
+                setUserDetails(userModelResponse.getProfile_url(), userModelResponse.getName());
             }
 
             enableButtons(false);
@@ -541,7 +655,7 @@ public class MainActivity extends AppCompatActivity {
 
 //            AppUsers user = new AppUsers(account.getDisplayName(), account.getEmail(), account.getPhotoUrl().toString());
 
-            setUserDetails(account.getPhotoUrl().toString(),account.getDisplayName());
+            setUserDetails(account.getPhotoUrl().toString(), account.getDisplayName());
 
             UserModel model = new UserModel(account.getDisplayName(), account.getEmail(), account.getPhotoUrl().toString());
             recordUser(model);
@@ -573,11 +687,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onResponse:  ret " + getClass().getEnclosingMethod().getName());
                     Log.d(TAG, "onResponse: " + response.code());
 
-                    DesignerToast.Success(MainActivity.this,"login Success", Gravity.CENTER,Toast.LENGTH_SHORT);
+                    DesignerToast.Success(MainActivity.this, "login Success", Gravity.CENTER, Toast.LENGTH_SHORT);
 
                     saveUserInfo(response.body());
 
-                }else {
+                } else {
                     Log.d(TAG, "onResponse: " + response.code());
                     Gson gson = new Gson();
                     Type type = new TypeToken<MyErrorClass>() {
@@ -593,10 +707,10 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> messages = (ArrayList<String>) hashMap.get("message");
                     String message = messages.get(0);
 
-                    if (!errorResponse.getName().equalsIgnoreCase("ValidationError")){
-                        DesignerToast.Error(MainActivity.this,field + " " + message, Gravity.CENTER,Toast.LENGTH_SHORT);
-                    }else {
-                        DesignerToast.Success(MainActivity.this,"login Success", Gravity.CENTER,Toast.LENGTH_SHORT);
+                    if (!errorResponse.getName().equalsIgnoreCase("ValidationError")) {
+                        DesignerToast.Error(MainActivity.this, field + " " + message, Gravity.CENTER, Toast.LENGTH_SHORT);
+                    } else {
+                        DesignerToast.Success(MainActivity.this, "login Success", Gravity.CENTER, Toast.LENGTH_SHORT);
                     }
 
                 }
@@ -618,7 +732,7 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = gson.toJson(modelResponse);
         prefsEditor.putString("app_user", json);
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private UserModelResponse retrieveUser() {
