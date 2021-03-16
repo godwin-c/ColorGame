@@ -43,6 +43,17 @@ dependencies {
 
     //firebase
     implementation 'com.google.firebase:firebase-analytics:17.4.4'
+    // Apply the Crashlytics Gradle plugin
+    apply plugin: 'com.google.firebase.crashlytics'
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:26.7.0')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
 
     //Admob
     implementation 'com.google.android.gms:play-services-ads:19.3.0'

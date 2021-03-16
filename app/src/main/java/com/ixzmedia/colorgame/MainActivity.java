@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -163,7 +165,32 @@ public class MainActivity extends AppCompatActivity {
                 NetworkAvaillabilityClass networkAvaillabilityClass = new NetworkAvaillabilityClass(MainActivity.this);
 
                 if (networkAvaillabilityClass.hasNetwork()) {
-                    performGoogleLogin();
+
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                    builder1.setMessage("Login?");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    performGoogleLogin();
+                                }
+                            });
+
+                    builder1.setNegativeButton(
+                            "No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+
+
                 } else {
                     DesignerToast.Warning(MainActivity.this, "You may not be connected to the internet", Gravity.CENTER, Toast.LENGTH_SHORT);
                 }
@@ -187,13 +214,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //DesignerToast.Info(MainActivity.this, "coming soon!", Gravity.CENTER, Toast.LENGTH_SHORT);
-                if (fileExists()) {
-                    Intent intent = new Intent(MainActivity.this, LeaderBoardActivity.class);
-                    startActivity(intent);
-                } else {
-                    downloadHighScore();
-                }
-
+//                if (fileExists()) {
+//                    Intent intent = new Intent(MainActivity.this, LeaderBoardActivity.class);
+//                    startActivity(intent);
+//                } else {
+//                    downloadHighScore();
+//                }
+                startActivity(new Intent(MainActivity.this, LeaderBoardActivity.class));
             }
         });
 

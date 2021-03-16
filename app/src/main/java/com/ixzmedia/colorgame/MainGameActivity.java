@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -334,7 +335,7 @@ public class MainGameActivity extends AppCompatActivity {
         builder.setView(dialogView);
 
         final TextView exitButton = dialogView.findViewById(R.id.btn_game_over_exit_game);
-        final Button playAgainButton = dialogView.findViewById(R.id.btn_game_over_play_again);
+        final LinearLayout playAgainButton = dialogView.findViewById(R.id.btn_game_over_play_again);
         final TextView txtScoreView = dialogView.findViewById(R.id.txt_game_score_display);
         final TextView shareScore = dialogView.findViewById(R.id.txt_game_share_score);
 
@@ -381,33 +382,35 @@ public class MainGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Share
-//                Intent intent = new Intent(Intent.ACTION_SEND);
-//                intent.setType("text/plain");
-//                intent.putExtra(Intent.EXTRA_TEXT, shareText);
-//                intent.putExtra(Intent.EXTRA_SUBJECT,"Color Game High score");
-//                startActivity(Intent.createChooser(intent,"Share Via"));
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, shareText);
+                intent.putExtra(Intent.EXTRA_SUBJECT,"Color Game High score");
+                startActivity(Intent.createChooser(intent,"Share Via"));
 
                 //uploadHighScore();
 
 
                 //String text1 = "Can you beat my record in COLOR GAME?";
-                String text2 = "Beat my COLOR GAME high Score : " + score + "  Level : " + getSelectedLevel();
+                //String text2 = "Beat my COLOR GAME high Score : " + score + "  Level : " + getSelectedLevel();
 
-                ImageCreationClass imageCreationClass = new ImageCreationClass(text2, R.drawable.plain_bg_color_game, MainGameActivity.this);
+               // ImageCreationClass imageCreationClass = new ImageCreationClass(text2, R.drawable.plain_bg_color_game, MainGameActivity.this);
 //                Bitmap bitmap = imageCreationClass.drawtextToBitmap();
 
 //                Bitmap bitmap = imageCreationClass.secondDraw();
-                Bitmap bitmap = imageCreationClass.textAsBitmap();
+                //Bitmap bitmap = imageCreationClass.textAsBitmap();
 //                    Bitmap bitmap = textAsBitmap(scoreToShare, 40, Color.WHITE);
 
-                shareBitmap(bitmap);
+                //shareBitmap(bitmap);
 
             }
         });
 
         sortHighscore();
 
-        alertDialog.show();
+        if(!isFinishing())
+            alertDialog.show();
+
 
 //        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainGameActivity.this);
 //        alertDialogBuilder

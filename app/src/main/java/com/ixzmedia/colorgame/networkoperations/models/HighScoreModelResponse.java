@@ -2,9 +2,10 @@ package com.ixzmedia.colorgame.networkoperations.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class HighScoreModelResponse {
+public class HighScoreModelResponse implements Serializable {
     @SerializedName("_id")
     private String _id;
     @SerializedName("user_id")

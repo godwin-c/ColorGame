@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Game Over!!!"
-        android:textColor="@color/green"
+        android:textColor="@color/colorAccent"
         android:textSize="20sp" />
 
     <LinearLayout
@@ -47,24 +47,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:textAppearance="@android:style/TextAppearance.Small"
             android:textStyle="bold"
             android:gravity="center"
             android:text="Exit Game"
             android:textColor="@color/red" />
 
-
-        <Button
+<!--        android:background="@drawable/all_side_rounded_bg"-->
+        <LinearLayout
             android:id="@+id/btn_game_over_play_again"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg"
+            android:layout_margin="15dp"
+            android:clickable="true"
+            android:elevation="5dp"
+            android:padding="3dp"
+            android:descendantFocusability="blocksDescendants"
+            android:gravity="center"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:background="@drawable/all_side_rounded_bg"
-            android:text="Play Game"
-            android:textAppearance="@android:style/TextAppearance.Small"
-            android:textColor="@color/grey" />
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:text="Play Again"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_game_over_play_again"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:text="Play Game"-->
+<!--            android:elevation="5dp"-->
+<!--            style="?attr/materialButtonOutlinedStyle"-->
+<!--            android:textAppearance="@android:style/TextAppearance.Small"-->
+<!--            android:textColor="@color/grey" />-->
 
     </LinearLayout>
     <LinearLayout

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Color Game</string>
+    <string name="app_name">Color Interactive Game</string>
     <string name="start_button_text">START GAME</string>
     <string name="admob_id">ca-app-pub-5308092603343685~4128608894</string>
     <string name="banner_ad_id">ca-app-pub-5308092603343685/9905170442</string>
@@ -7,4 +7,5 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_picture">user picture</string>
+    <string name="pull_down_to_fetch_high_scores">Pull Down to Fetch High Scores</string>
 </resources>
