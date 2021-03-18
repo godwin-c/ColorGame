@@ -1,6 +1,7 @@
 package com.ixzmedia.colorgame.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ import retrofit2.Response;
 
 public class EasyGameLeaderBoardFragment extends Fragment {
 
+    private static final String RECEIVER_ID = "com.ixzmedia.colorgame.LEADERBOARD_BROADCAST";
     SwipeRefreshLayout frag_easy_swipe_refresh;
     RecyclerView frag_easy_recycler_view;
 
@@ -138,6 +140,9 @@ public class EasyGameLeaderBoardFragment extends Fragment {
                             Log.d(TAG, "onResponse: Size of Data : " + highScoreModelResponses.size());
 //                            medium
                             frag_easy_swipe_refresh.setRefreshing(false);
+                            Intent intent = new Intent(RECEIVER_ID);
+                            getContext().sendBroadcast(intent);
+
                             setupDataForDisplay(highScoreModelResponses);
 
                         } else {
