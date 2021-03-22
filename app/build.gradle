@@ -9,8 +9,8 @@ android {
         applicationId "com.ixzmedia.colorgame"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "cig1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -44,6 +44,7 @@ dependencies {
     //firebase
     implementation 'com.google.firebase:firebase-analytics:17.4.4'
     // Apply the Crashlytics Gradle plugin
+    implementation 'com.google.firebase:firebase-messaging:20.2.0'
     apply plugin: 'com.google.firebase.crashlytics'
 
     // Import the BoM for the Firebase platform

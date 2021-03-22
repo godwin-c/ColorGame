@@ -23,4 +23,5 @@ public interface Rest_DB_interface {
 
     @GET("color-game-highscores")
     Call<ArrayList<HighScoreModelResponse>> getAllHighScores();
+
 }

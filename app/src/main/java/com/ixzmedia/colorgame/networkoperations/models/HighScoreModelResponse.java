@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class HighScoreModelResponse implements Serializable {
     @SerializedName("_id")
@@ -54,6 +55,15 @@ public class HighScoreModelResponse implements Serializable {
         this._tags = _tags;
         this._version = _version;
     }
+
+//    public static Comparator<HighScoreModelResponse> compareHighscores = new Comparator<HighScoreModelResponse>() {
+//        @Override
+//        public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
+//            int highscore1 = o1.getHighscore();
+//            int highscore2 = o2.highscore;
+//            return highscore2 - highscore1;
+//        }
+//    };
 
     public String getUser_name() {
         return user_name;

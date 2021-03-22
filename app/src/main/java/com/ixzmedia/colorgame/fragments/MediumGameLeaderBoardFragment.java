@@ -1,6 +1,7 @@
 package com.ixzmedia.colorgame.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -52,6 +55,7 @@ public class MediumGameLeaderBoardFragment extends Fragment {
     private static final String MEDIUM_LEVEL = "medium_level";
 
     private static final String TAG = MediumGameLeaderBoardFragment.class.getSimpleName();
+    private static final String RECEIVER_ID = "com.ixzmedia.colorgame.LEADERBOARD_RECEIVER";
 
     public MediumGameLeaderBoardFragment() {
         // Required empty public constructor
@@ -93,12 +97,12 @@ public class MediumGameLeaderBoardFragment extends Fragment {
         if (fileExist(MEDIUM_LEVEL)){
             Log.d(TAG, "onCreate: File Exists");
 
-            ArrayList<HighScoreModelResponse> easyHighScores = readFromStorage(MEDIUM_LEVEL);
+            ArrayList<HighScoreModelResponse> mediumHighScores = readFromStorage(MEDIUM_LEVEL);
 
             frag_medium_recycler_view.setVisibility(View.VISIBLE);
             empty_data_view.setVisibility(View.GONE);
 
-            setupRecyclerView(easyHighScores);
+            setupRecyclerView(mediumHighScores);
         } else {
             frag_medium_recycler_view.setVisibility(View.GONE);
             empty_data_view.setVisibility(View.VISIBLE);
@@ -215,12 +219,19 @@ public class MediumGameLeaderBoardFragment extends Fragment {
 
 
         storeResponse(topThreeHighScore, "top_three_high_scores");
+
         //restartActivity();
         setupRecyclerView(mediumHighScore);
     }
 
     private void setupRecyclerView(ArrayList<HighScoreModelResponse> easyHighScores) {
         HighScoreAdapter adapter;
+        Collections.sort(easyHighScores, new Comparator<HighScoreModelResponse>() {
+            @Override
+            public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
+                return o2.getHighscore() - o1.getHighscore();
+            }
+        });
         if (frag_medium_recycler_view.getAdapter() == null || frag_medium_recycler_view.getAdapter().getItemCount() < 1){
             adapter = new HighScoreAdapter(getContext(), easyHighScores);
             frag_medium_recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -231,6 +242,9 @@ public class MediumGameLeaderBoardFragment extends Fragment {
             adapter.setItems(easyHighScores);
             adapter.notifyDataSetChanged();
         }
+
+        Intent intent = new Intent(RECEIVER_ID);
+        getContext().sendBroadcast(intent);
     }
 
     private HighScoreModelResponse checkHighestScore(ArrayList<HighScoreModelResponse> sampleHighScores) {

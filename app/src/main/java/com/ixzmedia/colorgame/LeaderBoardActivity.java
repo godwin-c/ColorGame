@@ -8,8 +8,10 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.animation.ArgbEvaluator;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +45,7 @@ import retrofit2.Response;
 public class LeaderBoardActivity extends AppCompatActivity {
 
     private static final String TAG = LeaderBoardActivity.class.getSimpleName();
+    private static final String RECEIVER_ID = "com.ixzmedia.colorgame.LEADERBOARD_RECEIVER";
     // tab titles
     private String[] titles = new String[]{"Easy", "Medium", "Hard"};
 
@@ -60,10 +63,16 @@ public class LeaderBoardActivity extends AppCompatActivity {
     ArrayList<HighScoreModelResponse> topThreeLeaders;
     //SwipeRefreshLayout swipe_to_refresh_leader_board;
 
+    IntentFilter intentFilter;
+    LeaderScoresReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
+
+        receiver = new LeaderScoresReceiver();
+        intentFilter = new IntentFilter(RECEIVER_ID);
 
         initViews();
         setActionOnViewItems();
@@ -76,6 +85,18 @@ public class LeaderBoardActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver,intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
     private void setActionOnViewItems() {
@@ -218,4 +239,13 @@ public class LeaderBoardActivity extends AppCompatActivity {
         return null;
     }
 
+    public class LeaderScoresReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(RECEIVER_ID)){
+                setupThreeLeaders();
+            }
+        }
+    }
 }

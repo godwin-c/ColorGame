@@ -14,7 +14,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/frag_easy_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/empty_data_view"
@@ -22,7 +23,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="@color/grey"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="@string/pull_down_to_fetch_high_scores" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

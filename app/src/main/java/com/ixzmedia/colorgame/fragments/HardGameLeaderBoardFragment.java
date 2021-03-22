@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -220,6 +222,13 @@ public class HardGameLeaderBoardFragment extends Fragment {
 
     private void setupRecyclerView(ArrayList<HighScoreModelResponse> easyHighScores) {
         HighScoreAdapter adapter;
+        Collections.sort(easyHighScores, new Comparator<HighScoreModelResponse>() {
+            @Override
+            public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
+                return o2.getHighscore() - o1.getHighscore();
+            }
+        });
+
         if (frag_hard_recycler_view.getAdapter() == null || frag_hard_recycler_view.getAdapter().getItemCount() < 1){
             adapter = new HighScoreAdapter(getContext(), easyHighScores);
             frag_hard_recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -13,11 +13,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".services.MyMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
-        <activity android:name=".LeaderBoardActivity"
+        <activity
+            android:name=".LeaderBoardActivity"
             android:label="Leader Board"
             android:theme="@style/AppTheme2" />
-
         <activity
             android:name=".MainGameActivity"
             android:theme="@style/AppTheme2" />

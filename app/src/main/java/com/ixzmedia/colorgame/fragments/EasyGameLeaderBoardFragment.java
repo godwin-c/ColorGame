@@ -1,6 +1,7 @@
 package com.ixzmedia.colorgame.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -49,6 +52,7 @@ public class EasyGameLeaderBoardFragment extends Fragment {
     TextView empty_data_view;
 
     private static final String EASY_LEVEL = "easy_level";
+    private static final String RECEIVER_ID = "com.ixzmedia.colorgame.LEADERBOARD_RECEIVER";
 
     private static final String TAG = EasyGameLeaderBoardFragment.class.getSimpleName();
 
@@ -208,13 +212,22 @@ public class EasyGameLeaderBoardFragment extends Fragment {
 
 
         storeResponse(topThreeHighScore, "top_three_high_scores");
+
         //restartActivity();
         setupRecyclerView(easyHighScores);
     }
 
     private void setupRecyclerView(ArrayList<HighScoreModelResponse> easyHighScores) {
         HighScoreAdapter adapter;
+
+        Collections.sort(easyHighScores, new Comparator<HighScoreModelResponse>() {
+            @Override
+            public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
+                return o2.getHighscore() - o1.getHighscore();
+            }
+        });
         if (frag_easy_recycler_view.getAdapter() == null || frag_easy_recycler_view.getAdapter().getItemCount() < 1){
+
             adapter = new HighScoreAdapter(getContext(), easyHighScores);
             frag_easy_recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
             frag_easy_recycler_view.addItemDecoration(new VerticalSpace(20));
@@ -224,6 +237,9 @@ public class EasyGameLeaderBoardFragment extends Fragment {
             adapter.setItems(easyHighScores);
             adapter.notifyDataSetChanged();
         }
+
+        Intent intent = new Intent(RECEIVER_ID);
+        getContext().sendBroadcast(intent);
     }
 
     private HighScoreModelResponse checkHighestScore(ArrayList<HighScoreModelResponse> sampleHighScores) {

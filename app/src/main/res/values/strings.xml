@@ -4,8 +4,10 @@
     <string name="admob_id">ca-app-pub-5308092603343685~4128608894</string>
     <string name="banner_ad_id">ca-app-pub-5308092603343685/9905170442</string>
     <string name="interstitial_ad_id">ca-app-pub-5308092603343685/9173886162</string>
+    <string name="test_banner_ad_id">ca-app-pub-3940256099942544/6300978111</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_picture">user picture</string>
     <string name="pull_down_to_fetch_high_scores">Pull Down to Fetch High Scores</string>
+    <string name="test_interstitial_ad_id">ca-app-pub-3940256099942544/1033173712</string>
 </resources>
