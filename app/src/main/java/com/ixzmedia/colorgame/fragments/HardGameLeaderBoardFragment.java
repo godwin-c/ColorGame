@@ -222,12 +222,7 @@ public class HardGameLeaderBoardFragment extends Fragment {
 
     private void setupRecyclerView(ArrayList<HighScoreModelResponse> easyHighScores) {
         HighScoreAdapter adapter;
-        Collections.sort(easyHighScores, new Comparator<HighScoreModelResponse>() {
-            @Override
-            public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
-                return o2.getHighscore() - o1.getHighscore();
-            }
-        });
+        Collections.sort(easyHighScores, (o1, o2) -> o2.getHighscore() - o1.getHighscore());
 
         if (frag_hard_recycler_view.getAdapter() == null || frag_hard_recycler_view.getAdapter().getItemCount() < 1){
             adapter = new HighScoreAdapter(getContext(), easyHighScores);
