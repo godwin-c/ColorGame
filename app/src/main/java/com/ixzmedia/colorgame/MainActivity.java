@@ -95,24 +95,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startGameBTN = (Button) findViewById(R.id.btnStartGame);
-        gameInfo = findViewById(R.id.btnGameInfo);
-        gameLevel = findViewById(R.id.btnGameLevel);
+        initViews();
 
-        floatingActionButton = findViewById(R.id.fab_profile);
-        profile_layout = findViewById(R.id.profile_layout);
-        fab_show = findViewById(R.id.fab_show_profile);
-        fab_login = findViewById(R.id.fab_login_user);
+       initViewsActions();
 
-        txt_game_share_app = findViewById(R.id.txt_game_share_app);
-        app_user_username = findViewById(R.id.app_user_username);
-        app_user_highscore = findViewById(R.id.app_user_highscore);
-        app_user_game_level = findViewById(R.id.app_user_game_level);
 
-        app_user_profile_picture = findViewById(R.id.app_user_profile_picture);
-        app_user_username_display = findViewById(R.id.app_user_username_display);
-        btn_leaderboard = findViewById(R.id.btn_leaderboard);
+    }
 
+    private void initViewsActions() {
         gameLevel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +196,8 @@ public class MainActivity extends AppCompatActivity {
         txt_game_share_app.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DesignerToast.Info(MainActivity.this, "coming soon!", Gravity.CENTER, Toast.LENGTH_SHORT);
+               // DesignerToast.Info(MainActivity.this, "coming soon!", Gravity.CENTER, Toast.LENGTH_SHORT);
+                shareApp();
             }
         });
 
@@ -249,8 +240,40 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    private void shareApp() {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Color Interactive Game");
+            String shareMessage= "\nLet me recommend you this application\n\n";
+            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            startActivity(Intent.createChooser(shareIntent, "share via"));
+        } catch(Exception e) {
+            //e.toString();
+        }
+    }
 
+    private void initViews() {
+        startGameBTN = (Button) findViewById(R.id.btnStartGame);
+        gameInfo = findViewById(R.id.btnGameInfo);
+        gameLevel = findViewById(R.id.btnGameLevel);
+
+        floatingActionButton = findViewById(R.id.fab_profile);
+        profile_layout = findViewById(R.id.profile_layout);
+        fab_show = findViewById(R.id.fab_show_profile);
+        fab_login = findViewById(R.id.fab_login_user);
+
+        txt_game_share_app = findViewById(R.id.txt_game_share_app);
+        app_user_username = findViewById(R.id.app_user_username);
+        app_user_highscore = findViewById(R.id.app_user_highscore);
+        app_user_game_level = findViewById(R.id.app_user_game_level);
+
+        app_user_profile_picture = findViewById(R.id.app_user_profile_picture);
+        app_user_username_display = findViewById(R.id.app_user_username_display);
+        btn_leaderboard = findViewById(R.id.btn_leaderboard);
     }
 
     private void downloadHighScore() {

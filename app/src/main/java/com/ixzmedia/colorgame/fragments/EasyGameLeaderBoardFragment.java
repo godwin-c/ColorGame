@@ -220,12 +220,8 @@ public class EasyGameLeaderBoardFragment extends Fragment {
     private void setupRecyclerView(ArrayList<HighScoreModelResponse> easyHighScores) {
         HighScoreAdapter adapter;
 
-        Collections.sort(easyHighScores, new Comparator<HighScoreModelResponse>() {
-            @Override
-            public int compare(HighScoreModelResponse o1, HighScoreModelResponse o2) {
-                return o2.getHighscore() - o1.getHighscore();
-            }
-        });
+        Collections.sort(easyHighScores, (o1, o2) -> o2.getHighscore() - o1.getHighscore());
+
         if (frag_easy_recycler_view.getAdapter() == null || frag_easy_recycler_view.getAdapter().getItemCount() < 1){
 
             adapter = new HighScoreAdapter(getContext(), easyHighScores);
